@@ -1,30 +1,44 @@
-# BenchLLM
+# 🏋️‍♂️ BenchLLM 🏋️‍♀️
 
-BenchLLM is a Python-based open-source library that streamlines the testing process for Large Language Models (LLMs) and AI-powered applications. It offers an intuitive and robust way to validate and score the output of your code with minimal boilerplate or configuration.
+🦾 Continuous Integration for LLM powered appplications 🦙🦅🤖 
+
+[![GitHub Repo stars](https://img.shields.io/github/stars/v7labs/BenchLLM?style=social)](https://github.com/v7labs/BenchLLM/stargazers)
+[![Twitter Follow](https://img.shields.io/twitter/follow/V7Labs?style=social)](https://twitter.com/V7Labs)
+[![Discord Follow](https://dcbadge.vercel.app/api/server/HrhPdZf83u?style=flat)](https://discord.gg/HrhPdZf83u)
+
+BenchLLM is a Python-based open-source library that streamlines the testing of Large Language Models (LLMs) and AI-powered applications. It measures the accuracy of your model, agents, or chains by validating responses on any number of tests via LLMs.
 
 BenchLLM is actively used at [V7](https://www.v7labs.com) for improving our LLM applications and now Open Sourced under MIT License to share with the wider community
 
+
+## 💡 Get help on [Discord](https://discord.gg/HrhPdZf83u) or [Tweet at us](https://twitter.com/V7Labs)
+
+<hr/>
+
 Use BenchLLM to:
 
-- Easily set up a comprehensive testing suite for your LLMs.
-- Continous integration for your langchain/agents/models.
-- Elimiate flaky chains and create confidence in your code.
+- Test the responses of your LLM across any number of prompts.
+- Continuous integration for chains luke [Langchain](https://github.com/hwchase17/langchain), agents like [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT), or LLM models like [Llama](https://github.com/facebookresearch/llama) or GPT-4.
+- Eliminate flaky chains and create confidence in your code.
+- Spot inaccurate responses and hallucinations in your application at every version.
 
-> **NOTE:** BenchLLM is in the early stage of development and will be subject to rapid changes.
+<hr/>
 
-For bug reporting, feature requests, or contributions, please open an issue or submit a pull request (PR) on our GitHub page.
+> ⚠️ **NOTE:** BenchLLM is in the early stage of development and will be subject to rapid changes.
+>
+>For bug reporting, feature requests, or contributions, please open an issue or submit a pull request (PR) on our GitHub page.
 
-## BenchLLM Testing Methodology
+## 🧪 BenchLLM Testing Methodology
 
 BenchLLM implements a distinct two-step methodology for validating your machine learning models:
 
-1. **Testing**: This stage involves running your code against various tests and capturing the predictions produced by your model without immediate judgment or comparison.
+1. **Testing**: This stage involves running your code against any number of expected responses and capturing the predictions produced by your model without immediate judgment or comparison.
 
-2. **Evaluation**: During this phase, the recorded predictions are compared against the expected output. Detailed comparison reports, including pass/fail status and other metrics, are generated.
+2. **Evaluation**: The recorded predictions are compared against the expected output using LLMs to verify factual similarity (or optionally manually). Detailed comparison reports, including pass/fail status and other metrics, are generated.
 
 This methodical separation offers a comprehensive view of your model's performance and allows for better control and refinement of each step.
 
-## Install
+## 🚀 Install
 
 To install BenchLLM we use pip
 
@@ -32,7 +46,7 @@ To install BenchLLM we use pip
 pip install benchllm
 ```
 
-## Usage
+## 💻 Usage
 
 Start by importing the library and use the @benchllm.test decorator to mark the function you'd like to test:
 
@@ -102,9 +116,9 @@ The non interactive evaluators also supports `--workers N` to run in the evaluat
 $ bench run --evaluator string-match --workers 5
 ```
 
-### Eval
+### 🧮 Eval
 
-While bench run runs each test function and then evaluates their output, it can often be beneficial to separate these into two steps. For example, if you want a person to manually do the evaluation or if you want to try multiple evaluation methods on the same function.
+While _bench run_ runs each test function and then evaluates their output, it can often be beneficial to separate these into two steps. For example, if you want a person to manually do the evaluation or if you want to try multiple evaluation methods on the same function.
 
 ```bash
 $ bench run --no-eval
@@ -117,7 +131,7 @@ Then later you can evaluate them with
 $ bench eval output/latest/predictions
 ```
 
-## API
+## 🔌 API
 
 For more detailed control, BenchLLM provides an API.
 You are not required to add YML/JSON tests to be able to evaluate your model.
@@ -149,14 +163,14 @@ results = evaluator.run()
 print(results)
 ```
 
-## Commands
+## ☕️ Commands
 
 - `bench add`: Add a new test to a suite.
 - `bench tests`: List all tests in a suite.
 - `bench run`: Run all or target test suites.
 - `bench eval`: Runs the evaluation of an existing test run.
 
-## Contribute
+## 🙌 Contribute
 
 BenchLLM is developed for Python 3.10, although it may work with other Python versions as well. We recommend using a Python 3.10 environment. You can use conda or any other environment manager to set up the environment:
 
