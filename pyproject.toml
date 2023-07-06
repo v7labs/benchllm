@@ -1,0 +1,77 @@
+[build-system]
+requires = [ "poetry-core",]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "BenchLLM"
+version = "0.0.1"
+description = "Tool for testing LLMs"
+homepage = "https://github.com/v7labs/benchllm"
+authors = [ "Simon Edwardsson <simon@v7labs.com>", "Andrea Azzini <andrea@v7labs.com>"]
+readme = "README.md"
+license = "MIT"
+keywords = []
+classifiers = [ "Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License",]
+[[tool.poetry.packages]]
+include = "benchllm"
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+plugins = [ "pydantic.mypy",]
+follow_imports = "silent"
+warn_redundant_casts = true
+warn_unused_ignores = true
+check_untyped_defs = true
+no_implicit_reexport = true
+ignore_missing_imports = true
+disallow_any_unimported = true
+disallow_any_expr = false
+disallow_any_decorated = false
+disallow_any_explicit = false
+disallow_subclassing_any = true
+python_version = "3.10"
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_return_any = false
+warn_unreachable = true
+pretty = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[tool.black]
+line-length = 120
+
+[tool.flake8]
+max-line-length = 120
+ignore = [ "E203", "W503", "E402",]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+pyyaml = ">=5.1"
+typer = { version = "*", extras = ["all"] }
+pydantic = "^1.10.9"
+openai = "*"
+langchain = { version = "*", optional = true }
+pypdf = { version = "*", optional = true }
+tiktoken = { version = "*", optional = true }
+faiss-cpu = { version = "*", optional = true }
+types-pyyaml = { version = "*", optional = true }
+pytest = { version = "*", optional = true }
+pywebio = { version = "*", optional = true }
+
+[tool.poetry.extras]
+dev = [ "black", "isort", "flake8", "mypy", "pytest", "types-pyyaml"]
+test = [ "pytest"]
+examples = ["langchain", "tiktoken", "faiss-cpu", "pypdf"]
+
+[tool.poetry.scripts]
+bench = "benchllm.cli.main:main"

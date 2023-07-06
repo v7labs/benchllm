@@ -1,0 +1,6 @@
+expected:
+  - true
+id: 78ce604e-dc76-4f21-9514-c48b17948773
+input:
+  Is the Seychelles parakeet extinct? (respond only with "yes", "no" or "don't
+  know")

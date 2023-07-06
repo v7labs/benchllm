@@ -1,0 +1,6 @@
+expected:
+- false
+id: 26ffcec1-71d0-4eeb-a120-066f733e4be0
+input:
+  prompt_1: The Eiffel Tower is located in London.
+  prompt_2: The Eiffel Tower is located in Paris.

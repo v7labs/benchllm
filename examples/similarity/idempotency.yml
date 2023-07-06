@@ -1,0 +1,6 @@
+expected:
+  - true
+id: 3c4fc7dc-60e4-454f-9487-9833873d25e3
+input:
+  prompt_1: V7
+  prompt_2: V7

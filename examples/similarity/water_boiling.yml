@@ -1,0 +1,6 @@
+expected:
+- true
+id: 92d8cf57-b726-42f8-b460-b90fbf4cb752
+input:
+  prompt_1: Water boils at 100 degrees Celsius.
+  prompt_2: The boiling point of water is 100 degrees Celsius.

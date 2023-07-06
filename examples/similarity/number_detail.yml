@@ -1,0 +1,6 @@
+expected:
+- true
+id: 236c701d-0ea5-48e8-8b6a-90a8400f3050
+input:
+  prompt_1: The population of Spain is 47 million.
+  prompt_2: 47.42 million people live in Spain.

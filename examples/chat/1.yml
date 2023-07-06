@@ -1,0 +1,15 @@
+expected:
+  - Product Lead
+  - Andrea is a Product Lead at V7
+id: 4fbd341e-c489-4e39-8e24-5cfbac039cae
+input:
+  - content: Who is Andrea?
+    role: user
+  - content: As an AI language model, I don't have information on who Andrea is.
+    role: assistant
+  - content: Apologies, I should have let you know that Andrea is Product Lead at V7.
+    role: user
+  - content: Thanks, duly noted.
+    role: assistant
+  - content: What does Andrea do at V7? Be concise.
+    role: user

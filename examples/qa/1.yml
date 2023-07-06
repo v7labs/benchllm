@@ -1,0 +1,5 @@
+expected:
+  - 2
+  - 2.0
+id: 699e66ad-5018-4b2f-98f6-e6f22324fd7b
+input: What's 1+1? Be very terse, only numeric output

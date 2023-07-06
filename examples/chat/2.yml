@@ -1,0 +1,14 @@
+expected:
+  - Michael Jordan starred in the movie "Space Jam"
+id: 31228a9a-d515-463a-9956-d0f235de8357
+input:
+  - content: Who is Michael Jordan?
+    role: user
+  - content: Michael Jordan is an ex NBA player.
+    role: assistant
+  - content: What was the team that made him famous?
+    role: user
+  - content: The Chicago Bulls
+    role: assistant
+  - content: He starred in a famous movie. Which one?
+    role: user

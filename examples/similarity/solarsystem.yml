@@ -1,0 +1,6 @@
+expected:
+- true
+id: 5b10574a-ed92-4349-9fae-65bcb1bcbb3a
+input:
+  prompt_1: The Earth revolves around the Sun.
+  prompt_2: The Sun is at the center of the solar system.

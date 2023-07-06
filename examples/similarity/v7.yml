@@ -1,0 +1,6 @@
+expected:
+  - true
+id: 60df4985-7ba9-440a-9dab-0aa3ed986daa
+input:
+  prompt_1: I was created by V7
+  prompt_2: V7 created me
