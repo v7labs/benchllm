@@ -3,8 +3,8 @@ requires = [ "poetry-core",]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "BenchLLM"
-version = "0.0.1"
+name = "benchllm"
+version = "0.1.0"
 description = "Tool for testing LLMs"
 homepage = "https://github.com/v7labs/benchllm"
 authors = [ "Simon Edwardsson <simon@v7labs.com>", "Andrea Azzini <andrea@v7labs.com>"]
