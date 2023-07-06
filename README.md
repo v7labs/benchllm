@@ -18,7 +18,7 @@ BenchLLM is actively used at [V7](https://www.v7labs.com) for improving our LLM 
 Use BenchLLM to:
 
 - Test the responses of your LLM across any number of prompts.
-- Continuous integration for chains luke [Langchain](https://github.com/hwchase17/langchain), agents like [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT), or LLM models like [Llama](https://github.com/facebookresearch/llama) or GPT-4.
+- Continuous integration for chains like [Langchain](https://github.com/hwchase17/langchain), agents like [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT), or LLM models like [Llama](https://github.com/facebookresearch/llama) or GPT-4.
 - Eliminate flaky chains and create confidence in your code.
 - Spot inaccurate responses and hallucinations in your application at every version.
 
