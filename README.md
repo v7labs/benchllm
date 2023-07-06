@@ -29,7 +29,7 @@ This methodical separation offers a comprehensive view of your model's performan
 To install BenchLLM we use pip
 
 ```
-pip install git+https://github.com/v7labs/benchllm
+pip install benchllm
 ```
 
 ## Usage
