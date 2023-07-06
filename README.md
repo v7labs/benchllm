@@ -6,7 +6,7 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/V7Labs?style=social)](https://twitter.com/V7Labs)
 [![Discord Follow](https://dcbadge.vercel.app/api/server/x7ExfHb3bG?style=flat)](https://discord.gg/x7ExfHb3bG)
 
-BenchLLM is a Python-based open-source library that streamlines the testing of Large Language Models (LLMs) and AI-powered applications. It measures the accuracy of your model, agents, or chains by validating responses on any number of tests via LLMs.
+[**BenchLLM**](https://benchllm.com/) is a Python-based open-source library that streamlines the testing of Large Language Models (LLMs) and AI-powered applications. It measures the accuracy of your model, agents, or chains by validating responses on any number of tests via LLMs.
 
 BenchLLM is actively used at [V7](https://www.v7labs.com) for improving our LLM applications and is now Open Sourced under MIT License to share with the wider community
 
