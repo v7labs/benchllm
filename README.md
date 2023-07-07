@@ -1,6 +1,6 @@
 # 🏋️‍♂️ BenchLLM 🏋️‍♀️
 
-🦾 Continuous Integration for LLM powered applications 🦙🦅🤖 
+🦾 Continuous Integration for LLM powered applications 🦙🦅🤖
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/v7labs/BenchLLM?style=social)](https://github.com/v7labs/BenchLLM/stargazers)
 [![Twitter Follow](https://img.shields.io/twitter/follow/V7Labs?style=social)](https://twitter.com/V7Labs)
@@ -9,7 +9,6 @@
 [**BenchLLM**](https://benchllm.com/) is a Python-based open-source library that streamlines the testing of Large Language Models (LLMs) and AI-powered applications. It measures the accuracy of your model, agents, or chains by validating responses on any number of tests via LLMs.
 
 BenchLLM is actively used at [V7](https://www.v7labs.com) for improving our LLM applications and is now Open Sourced under MIT License to share with the wider community
-
 
 ## 💡 Get help on [Discord](https://discord.gg/x7ExfHb3bG) or [Tweet at us](https://twitter.com/V7Labs)
 
@@ -26,7 +25,7 @@ Use BenchLLM to:
 
 > ⚠️ **NOTE:** BenchLLM is in the early stage of development and will be subject to rapid changes.
 >
->For bug reporting, feature requests, or contributions, please open an issue or submit a pull request (PR) on our GitHub page.
+> For bug reporting, feature requests, or contributions, please open an issue or submit a pull request (PR) on our GitHub page.
 
 ## 🧪 BenchLLM Testing Methodology
 
@@ -116,6 +115,16 @@ The non interactive evaluators also supports `--workers N` to run in the evaluat
 $ bench run --evaluator string-match --workers 5
 ```
 
+To accelerate the evaluation process, BenchLLM uses a cache. If a (prediction, expected) pair has been evaluated in the past and a cache was used, the evaluation output will be saved for future evaluations. There are several types of caches:
+
+- `memory`, only caches output values during the current run. This is particularly useful when running with `--retry-count N`
+- `file`, stores the cache at the end of the run as a JSON file in output/cache.json. This is the default behavior.
+- `none`, does not use any cache.
+
+```bash
+$ bench run examples --cache memory
+```
+
 ### 🧮 Eval
 
 While _bench run_ runs each test function and then evaluates their output, it can often be beneficial to separate these into two steps. For example, if you want a person to manually do the evaluation or if you want to try multiple evaluation methods on the same function.
@@ -162,6 +171,20 @@ results = evaluator.run()
 
 print(results)
 ```
+
+If you want to incorporate caching and run multiple parallel evaluation jobs, you can modify your evaluator as follows:
+
+```python
+from benchllm.cache import FileCache
+
+...
+
+evaluator = FileCache(StringMatchEvaluator(workers=2), Path("path/to/cache.json"))
+evaluator.load(predictions)
+results = evaluator.run()
+```
+
+In this example, `FileCache` is used to enable caching, and the `workers` parameter of `StringMatchEvaluator` is set to `2` to allow for parallel evaluations. The cache results are saved in a file specified by `Path("path/to/cache.json")`.
 
 ## ☕️ Commands
 

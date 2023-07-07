@@ -4,7 +4,9 @@ from test.utils import create_openai_object
 from unittest.mock import MagicMock, Mock, call, patch
 
 from benchllm import Prediction, SemanticEvaluator, StringMatchEvaluator, Test
+from benchllm.cache import MemoryCache
 from benchllm.data_types import FunctionID
+from benchllm.evaluator import Evaluator
 
 
 def test_string_match_passes_if_output_is_equal_to_expected():

@@ -2,8 +2,9 @@ from pathlib import Path
 
 import typer
 
+from benchllm.cache import FileCache
 from benchllm.cli.listener import ReportListener, RichCliListener
-from benchllm.cli.utils import get_evaluator
+from benchllm.cli.utils import add_cache, get_evaluator
 from benchllm.tester import Tester
 from benchllm.utils import find_files
 
@@ -17,6 +18,7 @@ def run_suite(
     workers: int,
     evaluator_name: str,
     retry_count: int,
+    cache: str,
 ) -> bool:
     files = find_files(file_search_paths)
     if not files:
@@ -45,6 +47,10 @@ def run_suite(
         return True
 
     evaluator = get_evaluator(evaluator_name, model, workers)
+    evaluator = add_cache(cache, evaluator, output_dir / ".." / f"cache.json")
+
+    cli_listener.set_evaulator(evaluator)
+
     evaluator.add_listener(cli_listener)
     evaluator.add_listener(report_listener)
     evaluator.load(tester.predictions)

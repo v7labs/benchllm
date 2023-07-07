@@ -47,11 +47,11 @@ class InteractiveEvaluator(Evaluator):
 
 
 class WebEvaluator(Evaluator):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(workers=1)
 
         @session.defer_call
-        def on_close():
+        def on_close() -> None:
             typer.secho(
                 f"The evaluation was interrupted. Run bench eval to start again", fg=typer.colors.RED, bold=True
             )

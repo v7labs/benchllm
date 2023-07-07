@@ -5,11 +5,13 @@ from itertools import groupby
 from operator import attrgetter
 from pathlib import Path
 from timeit import default_timer as timer
-from typing import List
+from typing import Any, List, Optional
 
 import yaml
+from pydantic import BaseModel, validator
 
 from benchllm.data_types import Evaluation, FunctionID, Prediction
+from benchllm.input_types import Json
 from benchllm.listener import EvaluatorListener
 from benchllm.similarity import semantically_similar
 
@@ -20,6 +22,10 @@ class Evaluator(ABC):
         self._listeners: list[EvaluatorListener] = []
         self._evaluations: list[Evaluation] = []
         self._workers: int = workers
+
+    class Match(BaseModel):
+        prediction: Json
+        expected: Json
 
     def add_listener(self, listener: EvaluatorListener) -> None:
         self._listeners.append(listener)
@@ -55,7 +61,9 @@ class Evaluator(ABC):
         start = timer()
         match = self.evaluate_prediction(prediction)
         end = timer()
-        evaluation = Evaluation(prediction=prediction, passed=match, eval_time_elapsed=end - start)
+        evaluation = Evaluation(
+            prediction=prediction, passed=isinstance(match, Evaluator.Match), eval_time_elapsed=end - start
+        )
         self._broadcast_evaluate_prediction_ended(evaluation)
         return evaluation
 
@@ -71,8 +79,13 @@ class Evaluator(ABC):
     def evaluations(self) -> list[Evaluation]:
         return self._evaluations
 
+    @property
+    def workers(self) -> int:
+        return self._workers
+
     @abstractmethod
-    def evaluate_prediction(self, prediction: Prediction) -> bool:
+    def evaluate_prediction(self, prediction: Prediction) -> Optional[Match]:
+        """Evaluate a single prediction, return a Match if the prediction matches the expected output."""
         pass
 
     def max_threads(self) -> int:
@@ -108,11 +121,11 @@ class SemanticEvaluator(Evaluator):
         super().__init__(workers=workers)
         self.model = model
 
-    def evaluate_prediction(self, prediction: Prediction) -> bool:
+    def evaluate_prediction(self, prediction: Prediction) -> Optional[Evaluator.Match]:
         for expected in prediction.test.expected:
             if semantically_similar(expected, prediction.output, model=self.model):
-                return True
-        return False
+                return Evaluator.Match(prediction=prediction.output, expected=expected)
+        return None
 
 
 class StringMatchEvaluator(Evaluator):
@@ -132,9 +145,12 @@ class StringMatchEvaluator(Evaluator):
 
         return expected == output
 
-    def evaluate_prediction(self, prediction: Prediction) -> bool:
+    def evaluate_prediction(self, prediction: Prediction) -> Optional[Evaluator.Match]:
         output = prediction.output
-        return any([self.match_strings(expected, output) for expected in prediction.test.expected])
+        for expected in prediction.test.expected:
+            if self.match_strings(expected, output):
+                return Evaluator.Match(prediction=prediction.output, expected=expected)
+        return None
 
 
 def load_prediction_files(paths: List[Path]) -> List[Prediction]:

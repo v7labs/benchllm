@@ -1,6 +1,7 @@
 import datetime
 from pathlib import Path
 
+from benchllm.cache import FileCache, MemoryCache
 from benchllm.cli.evaluator import InteractiveEvaluator, WebEvaluator
 from benchllm.evaluator import Evaluator, SemanticEvaluator, StringMatchEvaluator
 
@@ -28,3 +29,14 @@ def get_evaluator(evaluator_name: str, model: str, workers: int) -> Evaluator:
         return WebEvaluator()
     else:
         raise ValueError(f"Unknown evaluator {evaluator_name}")
+
+
+def add_cache(cache_name: str, evaluator: Evaluator, cache_path: Path) -> Evaluator:
+    if cache_name == "file":
+        return FileCache(evaluator, cache_path)
+    elif cache_name == "memory":
+        return MemoryCache(evaluator)
+    elif cache_name == "none":
+        return evaluator
+    else:
+        raise ValueError(f"Unknown cache {cache_name}, valid values are 'file', 'memory', 'none'")

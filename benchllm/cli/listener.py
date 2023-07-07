@@ -1,6 +1,7 @@
 import datetime
 import json
 from pathlib import Path
+from typing import Optional
 
 import typer
 from rich import print
@@ -8,7 +9,9 @@ from rich.console import Console
 from rich.markup import render
 from rich.table import Table
 
+from benchllm.cache import MemoryCache
 from benchllm.data_types import Evaluation, FunctionID, Prediction, Test, TestFunction
+from benchllm.evaluator import Evaluator
 from benchllm.listener import EvaluatorListener, TesterListener
 
 
@@ -37,12 +40,23 @@ class ReportListener(TesterListener, EvaluatorListener):
 
 
 class RichCliListener(TesterListener, EvaluatorListener):
-    def __init__(self, root_dir: Path, *, interactive: bool, test_only: bool = False, eval_only: bool = False) -> None:
+    def __init__(
+        self,
+        root_dir: Path,
+        *,
+        interactive: bool,
+        test_only: bool = False,
+        eval_only: bool = False,
+    ) -> None:
         super().__init__()
         self.root_dir = root_dir
         self.interactive = interactive
         self._eval_only = eval_only
         self._test_only = test_only
+        self._evaluator: Optional[Evaluator] = None
+
+    def set_evaulator(self, evaluator: Evaluator) -> None:
+        self._evaluator = evaluator
 
     def test_run_started(self) -> None:
         print_centered(" Run Tests ")
@@ -116,6 +130,9 @@ class RichCliListener(TesterListener, EvaluatorListener):
                 console.print(table)
 
         tmp = f" [red]{len(failed)} failed[/red], [green]{len(evaluations) - len(failed)} passed[/green], in [blue]{format_time(total_eval_time + total_test_time)}[/blue] "
+        if isinstance(self._evaluator, MemoryCache):
+            tmp += f"(cached hits {self._evaluator.num_cache_hits}, cached misses {self._evaluator.num_cache_misses}) "
+
         print_centered(tmp)
 
 
