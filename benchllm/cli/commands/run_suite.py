@@ -47,7 +47,7 @@ def run_suite(
         return True
 
     evaluator = get_evaluator(evaluator_name, model, workers)
-    evaluator = add_cache(cache, evaluator, output_dir / ".." / f"cache.json")
+    evaluator = add_cache(cache, evaluator, output_dir.parent / "cache.json")
 
     cli_listener.set_evaulator(evaluator)
 

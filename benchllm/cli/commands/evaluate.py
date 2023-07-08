@@ -18,7 +18,7 @@ def evaluate_predictions(
     load_prediction_files(file_or_dir)
 
     evaluator = get_evaluator(evaluator_name, model, workers)
-    evaluator = add_cache(cache, evaluator, output_dir / ".." / f"cache.json")
+    evaluator = add_cache(cache, evaluator, output_dir.parent / "cache.json")
 
     cli_listener.set_evaulator(evaluator)
 

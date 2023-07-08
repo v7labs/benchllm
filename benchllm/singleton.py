@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Callable, Generic, Optional, Type, TypeVar
+from typing import Callable, Generic, Optional, Type, TypeVar
 
 T = TypeVar("T")
 

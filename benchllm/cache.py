@@ -30,18 +30,27 @@ class MemoryCache(Evaluator):
         self._data[key] = value
 
     def evaluate_prediction(self, prediction: Prediction) -> Optional[Evaluator.Match]:
+        uncached_expectations = []
         for expected in prediction.test.expected:
             lookup = self.lookup(expected, prediction.output)
-            # None indicates that nothing was found in the cache
-            # while True and False are both valid cache values
             if lookup is None:
-                continue
-            self._num_cache_hits += 1
-            if lookup:
+                uncached_expectations.append(expected)
+            elif lookup:
+                # If we find a positive match we can stop comparing and just return.
+                # For negative matches we still need to check the other expected answers.
+                self._num_cache_hits += 1
                 return Evaluator.Match(prediction=prediction.output, expected=expected)
+
+        # If all expectations were found in the cache but were negative matches,
+        # we increment the cache hits counter and return None as there's no match.
+        if not uncached_expectations:
+            self._num_cache_hits += 1
             return None
 
         self._num_cache_misses += 1
+        # set prediction.test.expected to only the ones that were not cached
+        prediction = Prediction(**prediction.dict())
+        prediction.test.expected = uncached_expectations
         result = self._evaluator.evaluate_prediction(prediction)
         if result:
             self.store(result.expected, result.prediction, True)

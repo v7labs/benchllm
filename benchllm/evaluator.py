@@ -5,10 +5,10 @@ from itertools import groupby
 from operator import attrgetter
 from pathlib import Path
 from timeit import default_timer as timer
-from typing import Any, List, Optional
+from typing import List, Optional
 
 import yaml
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 from benchllm.data_types import Evaluation, FunctionID, Prediction
 from benchllm.input_types import Json

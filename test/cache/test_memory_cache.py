@@ -41,6 +41,28 @@ EXAMPLE_PREDICTIONS_ALL_SAME = [
 ]
 
 
+EXAMPLE_PREDICTIONS_CACHING_NEGATIVE = [
+    Prediction(
+        test=Test(input="foo", expected=["no-match"]),
+        output="match",
+        time_elapsed=0,
+        function_id=FunctionID.default(),
+    ),
+    Prediction(
+        test=Test(input="foo", expected=["no-match", "match"]),
+        output="match",
+        time_elapsed=0,
+        function_id=FunctionID.default(),
+    ),
+    Prediction(
+        test=Test(input="foo", expected=["match", "no-match"]),
+        output="match",
+        time_elapsed=0,
+        function_id=FunctionID.default(),
+    ),
+]
+
+
 def test_memory_cache_will_prevent_calls_to_evaluate_prediction_on_second_run():
     with patch.object(
         StringMatchEvaluator, "evaluate_prediction", side_effect=StringMatchEvaluator().evaluate_prediction
@@ -76,6 +98,34 @@ def test_memory_cache_caches_during_run():
         assert evaluations[1].passed
         assert mock_method.call_count == 1
         assert evaluator.num_cache_hits == 1
+
+
+def test_memory_cache_caches_always_tries_to_pass():
+    with patch.object(
+        StringMatchEvaluator, "evaluate_prediction", side_effect=StringMatchEvaluator().evaluate_prediction
+    ) as mock_method:
+        evaluator = MemoryCache(StringMatchEvaluator())
+        evaluator.load(EXAMPLE_PREDICTIONS_CACHING_NEGATIVE)
+
+        evaluations = evaluator.run()
+        assert not evaluations[0].passed
+        assert evaluations[1].passed
+        assert evaluations[2].passed
+        assert mock_method.call_count == 2
+        assert evaluator.num_cache_hits == 1
+
+
+def test_memory_cache_does_not_pass_on_cached_negatives():
+    with patch.object(
+        StringMatchEvaluator, "evaluate_prediction", side_effect=StringMatchEvaluator().evaluate_prediction
+    ) as mock_method:
+        evaluator = MemoryCache(StringMatchEvaluator())
+        evaluator.load(EXAMPLE_PREDICTIONS_CACHING_NEGATIVE)
+
+        evaluator.run()
+        assert mock_method.call_count == 2
+        assert mock_method.call_args_list.pop(0).args[0].test.expected == ["no-match"]
+        assert mock_method.call_args_list.pop(0).args[0].test.expected == ["match"]
 
 
 def test_memory_cache_supports_numbers():
