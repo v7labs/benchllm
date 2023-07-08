@@ -22,12 +22,12 @@ def test_evaluator_can_load_prediction_file():
         "time_elapsed": 0,
         "function_id": {"module_path": "test", "line_number": 1},
     }
-    with tempfile.NamedTemporaryFile(suffix=".json") as f:
-        f.write(json.dumps(prediction).encode())
-        f.seek(0)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        prediction_path = Path(tmpdir, "prediction.json")
+        prediction_path.write_bytes(json.dumps(prediction).encode())
 
         evaluator = NoopEvaluator()
-        evaluator.load_prediction_file(Path(f.name))
+        evaluator.load_prediction_file(prediction_path)
 
         assert evaluator.predictions[0].output == "42"
         assert evaluator.predictions[0].test.input == "1+1"
