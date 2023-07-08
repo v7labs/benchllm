@@ -3,8 +3,7 @@ from pathlib import Path
 from benchllm.cache import FileCache
 from benchllm.cli.listener import ReportListener, RichCliListener
 from benchllm.cli.utils import add_cache, get_evaluator
-from benchllm.evaluator import load_prediction_files
-from benchllm.utils import find_json_yml_files
+from benchllm.utils import find_json_yml_files, load_prediction_files
 
 
 def evaluate_predictions(
