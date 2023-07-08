@@ -1,5 +1,7 @@
 import signal
+from typing import Optional
 
+import click
 import typer
 from pywebio import session
 from pywebio.input import actions
@@ -10,7 +12,7 @@ from benchllm.evaluator import Evaluator
 
 
 class InteractiveEvaluator(Evaluator):
-    def evaluate_prediction(self, prediction: Prediction) -> bool:
+    def evaluate_prediction(self, prediction: Prediction) -> Optional[Evaluator.Match]:
         header = (
             f'{typer.style("Does ", bold=True)}'
             f"{typer.style(prediction.output, fg=typer.colors.BRIGHT_BLUE, bold=True)}"
@@ -23,27 +25,14 @@ class InteractiveEvaluator(Evaluator):
             typer.secho(f"{i}. ", fg=typer.colors.BRIGHT_BLUE, bold=True, nl=False)
             typer.secho(expected, bold=True)
 
-        while True:
-            prompt_string = (
-                f'{typer.style("[")}'
-                f'{typer.style("y", fg=typer.colors.GREEN, bold=True)}'
-                f'{typer.style("/")}'
-                f'{typer.style("n", fg=typer.colors.RED, bold=True)}'
-                f'{typer.style("]")}'
-            )
+        options = [str(idx) for idx, _ in enumerate(prediction.test.expected, start=1)] + ["n"]
 
-            response = response = typer.prompt(prompt_string).lower()
-            if response == "y":
-                return True
-            elif response == "n":
-                return False
-            else:
-                typer.secho(
-                    'Invalid answer. Please just use "y" to mark the test as correct, and "n" to mark the test as incorrect',
-                    fg=typer.colors.RED,
-                    bold=True,
-                )
-                continue
+        prompt_string = f"[{typer.style('matching number', fg=typer.colors.GREEN, bold=True)} or {typer.style('n', fg=typer.colors.RED, bold=True)}]"
+        click_choice = click.Choice(options)
+        response = typer.prompt(prompt_string, default="n", type=click_choice, show_choices=False).lower()
+        if response == "n":
+            return None
+        return Evaluator.Match(prediction=prediction.output, expected=prediction.test.expected[int(response) - 1])
 
 
 class WebEvaluator(Evaluator):
