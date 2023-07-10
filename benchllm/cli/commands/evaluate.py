@@ -1,13 +1,13 @@
 from pathlib import Path
 
+from benchllm.cache import FileCache
 from benchllm.cli.listener import ReportListener, RichCliListener
-from benchllm.cli.utils import get_evaluator
-from benchllm.evaluator import load_prediction_files
-from benchllm.utils import find_json_yml_files
+from benchllm.cli.utils import add_cache, get_evaluator
+from benchllm.utils import find_json_yml_files, load_prediction_files
 
 
 def evaluate_predictions(
-    file_or_dir: list[Path], model: str, output_dir: Path, workers: int, evaluator_name: str
+    file_or_dir: list[Path], model: str, output_dir: Path, workers: int, evaluator_name: str, cache: str
 ) -> bool:
     files = find_json_yml_files(file_or_dir)
 
@@ -17,6 +17,10 @@ def evaluate_predictions(
     load_prediction_files(file_or_dir)
 
     evaluator = get_evaluator(evaluator_name, model, workers)
+    evaluator = add_cache(cache, evaluator, output_dir.parent / "cache.json")
+
+    cli_listener.set_evaulator(evaluator)
+
     evaluator.add_listener(cli_listener)
     evaluator.add_listener(report_listener)
     for file in files:

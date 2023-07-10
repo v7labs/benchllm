@@ -1,5 +1,10 @@
 import ast
+import json
 from pathlib import Path
+
+import yaml
+
+from benchllm.data_types import Prediction
 
 
 class DecoratorFinder(ast.NodeVisitor):
@@ -59,3 +64,21 @@ def find_json_yml_files(paths: list[Path]) -> list[Path]:
                 if file.suffix in (".yml", ".json", ".yaml"):
                     files.append(file)
     return list(set(files))
+
+
+def load_prediction_files(paths: list[Path]) -> list[Prediction]:
+    predictions = []
+    for path in paths:
+        for file_path in path.rglob("*"):
+            if not file_path.is_file():
+                continue
+            if file_path.suffix not in {".json", ".yml", ".yaml"}:
+                continue
+            with open(file_path, "r") as file:
+                if file_path.suffix == ".json":
+                    data = json.load(file)
+                    predictions.append(Prediction(**data))
+                elif file_path.suffix in {".yml", ".yaml"}:
+                    data = yaml.safe_load(file)
+                    predictions.append(Prediction(**data))
+    return predictions

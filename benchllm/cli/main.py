@@ -28,6 +28,7 @@ def run(
     workers: Annotated[int, typer.Option(help="Number of workers to use to run the evaluation.")] = 1,
     retry_count: Annotated[int, typer.Option(help="Rerun tests to spot flaky output")] = 1,
     evaluator: Annotated[str, typer.Option(help="Evaluator to use to run the evaluation.")] = "semantic",
+    cache: Annotated[str, typer.Option(help="Type of cache to use.")] = "file",
 ) -> None:
     if not file_or_dir:
         file_or_dir = [Path.cwd()]
@@ -40,6 +41,7 @@ def run(
         evaluator_name=evaluator,
         no_eval=not eval,
         retry_count=retry_count,
+        cache=cache,
     )
     if not success:
         raise typer.Exit(code=1)
@@ -61,6 +63,7 @@ def eval(
     model: Annotated[str, typer.Option(help="Model to use to run the evaluation.")] = "gpt-3",
     workers: Annotated[int, typer.Option(help="Number of workers to use to run the evaluation.")] = 1,
     evaluator: Annotated[str, typer.Option(help="Evaluator to use to run the evaluation.")] = "semantic",
+    cache: Annotated[str, typer.Option(help="Type of cache to use.")] = "file",
 ) -> None:
     success = evaluate_predictions(
         file_or_dir=file_or_dir,
@@ -68,6 +71,7 @@ def eval(
         output_dir=output_dir,
         workers=workers,
         evaluator_name=evaluator,
+        cache=cache,
     )
     if not success:
         raise typer.Exit(code=1)

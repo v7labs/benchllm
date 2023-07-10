@@ -47,4 +47,6 @@ def semantically_similar(answer1: str, answer2: str, model: str = "gpt-3") -> bo
     }}""",
         model=model,
     )
+    if response not in ["same", "different"]:
+        raise ValueError(f"Unexpected response: {response}")
     return response == "same"

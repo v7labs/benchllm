@@ -1,10 +1,10 @@
 import inspect
 from pathlib import Path
-from typing import Any, Callable, Generic, Optional, Type, TypeVar
+from typing import Callable, Type, TypeVar
 
 from .data_types import Evaluation, Prediction, Test  # noqa
 from .evaluator import Evaluator, SemanticEvaluator, StringMatchEvaluator  # noqa
-from .input_types import ChatInput, SimilarityInput
+from .input_types import ChatInput, SimilarityInput  # noqa
 from .similarity import semantically_similar  # noqa
 from .singleton import TestSingleton  # noqa
 from .tester import Tester  # noqa
