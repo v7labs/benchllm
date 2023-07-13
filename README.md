@@ -195,7 +195,7 @@ In this example, `FileCache` is used to enable caching, and the `workers` parame
 
 ## 🙌 Contribute
 
-BenchLLM is developed for Python 3.10, although it may work with other Python versions as well. We recommend using a Python 3.10 environment and pip >=23. You can use conda or any other environment manager to set up the environment:
+BenchLLM is developed for Python 3.10, although it may work with other Python versions as well. We recommend using a Python 3.10 environment and pip >= 23. You can use conda or any other environment manager to set up the environment:
 
 ```bash
 $ conda create --name benchllm python=3.10
