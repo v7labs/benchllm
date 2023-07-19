@@ -70,7 +70,6 @@ class Evaluation(BaseModel):
     prediction: Prediction
     passed: bool
     eval_time_elapsed: float
-    call_errors: list[CallError] = []
 
 
 T = TypeVar("T")
