@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-from benchllm.data_types import Prediction
+from benchllm.data_types import CallError, CallErrorType, Prediction
 
 
 class DecoratorFinder(ast.NodeVisitor):
@@ -82,3 +82,40 @@ def load_prediction_files(paths: list[Path]) -> list[Prediction]:
                     data = yaml.safe_load(file)
                     predictions.append(Prediction(**data))
     return predictions
+
+
+def collect_call_errors(prediction: Prediction) -> list[CallError]:
+    """Assert that the calls in the prediction match the expected calls."""
+    if prediction.test.calls is None:
+        return []
+    errors = []
+    lookup = {call.name: call for call in prediction.test.calls}
+
+    for function_name, invocations in prediction.calls.items():
+        call = lookup[function_name]
+        if not call:
+            errors.append(CallError(function_name=function_name, error_type=CallErrorType.MISSING_FUNCTION))
+            continue
+
+        for arguments in invocations:
+            for argument_name, argument_value in call.arguments.items():
+                if argument_name not in arguments:
+                    errors.append(
+                        CallError(
+                            function_name=function_name,
+                            argument_name=argument_name,
+                            error_type=CallErrorType.MISSING_ARGUMENT,
+                        )
+                    )
+            for argument_name, argument_value in arguments.items():
+                if argument_name in call.arguments and argument_value != call.arguments[argument_name]:
+                    errors.append(
+                        CallError(
+                            function_name=function_name,
+                            argument_name=argument_name,
+                            expected_value=call.arguments[argument_name],
+                            actual_value=argument_value,
+                            error_type=CallErrorType.VALUE_MISMATCH,
+                        )
+                    )
+    return errors

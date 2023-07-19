@@ -1,8 +1,16 @@
+from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Generic, Optional, TypeVar
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
+
+
+class TestCall(BaseModel):
+    __test__ = False
+    name: str
+    arguments: dict[str, Any]
+    returns: Any
 
 
 class Test(BaseModel):
@@ -11,6 +19,7 @@ class Test(BaseModel):
     input: Any
     expected: list[str]
     file_path: Optional[Path] = None
+    calls: Optional[list[TestCall]] = None
 
 
 class FunctionID(BaseModel):
@@ -45,6 +54,21 @@ class Prediction(BaseModel):
     output: str
     time_elapsed: float
     function_id: FunctionID
+    calls: dict[str, list[dict[str, Any]]] = {}
+
+
+class CallErrorType(str, Enum):
+    MISSING_FUNCTION = "Missing function"
+    MISSING_ARGUMENT = "Missing argument"
+    VALUE_MISMATCH = "Value mismatch"
+
+
+class CallError(BaseModel):
+    function_name: str
+    argument_name: Optional[str] = None
+    expected_value: Optional[Any] = None
+    actual_value: Optional[Any] = None
+    error_type: CallErrorType
 
 
 class Evaluation(BaseModel):

@@ -1,0 +1,10 @@
+expected:
+  - "no"
+id: 4b717b39-da96-4ca3-8aaf-070c7f11449c
+input: I live in London, can I expect rain today?
+calls:
+  - name: forecast.get_n_day_weather_forecast
+    returns: It's sunny today in London today.
+    arguments:
+      location: London
+      num_days: 1
