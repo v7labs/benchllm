@@ -60,21 +60,25 @@ class Tester:
 
         import_module_from_file(path)
 
-        if not test_singleton.func or not test_singleton.type or not test_singleton.suite:
+        if not test_singleton.functions:
             raise NoBenchLLMTestFunction()
 
-        function_id = FunctionID(module_path=path, line_number=inspect.getsourcelines(test_singleton.func)[1])
-
-        self.add_test_function(
-            TestFunction(
-                function=test_singleton.func,
-                function_id=function_id,
-                input_type=test_singleton.type,
-                suite=test_singleton.suite,
+        for function in test_singleton.functions:
+            function_id = FunctionID(
+                module_path=path,
+                line_number=inspect.getsourcelines(function.func)[1],
+                name=function.func.__name__,
             )
-        )
 
-        self.load_tests(test_singleton.suite, function_id)
+            self.add_test_function(
+                TestFunction(
+                    function=function.func,
+                    function_id=function_id,
+                    input_type=function.type,
+                    suite=function.suite,
+                )
+            )
+            self.load_tests(function.suite, function_id)
 
     def run(self) -> list[Prediction]:
         """Runs each test through the test function and stores the result"""

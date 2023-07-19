@@ -11,5 +11,5 @@ input:
     role: user
   - content: Thanks, duly noted.
     role: assistant
-  - content: What does Andrea do at V7? Be concise.
+  - content: What does Andrea do at V7? Be very concise.
     role: user

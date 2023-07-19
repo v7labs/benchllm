@@ -20,7 +20,7 @@ def test_evaluator_can_load_prediction_file():
         "output": "42",
         "test": {"input": "1+1", "expected": ["2"]},
         "time_elapsed": 0,
-        "function_id": {"module_path": "test", "line_number": 1},
+        "function_id": {"module_path": "test", "line_number": 1, "name": "test"},
     }
     with tempfile.TemporaryDirectory() as tmpdir:
         prediction_path = Path(tmpdir, "prediction.json")
