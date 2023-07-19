@@ -3,10 +3,11 @@ import inspect
 import json
 import sys
 import uuid
+from contextlib import contextmanager
 from pathlib import Path
 from timeit import default_timer as timer
 from types import ModuleType
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Iterator, Optional, Union
 
 import yaml
 from pydantic import ValidationError, parse_obj_as
@@ -111,29 +112,8 @@ class Tester:
 
                     # set up mock functions for the test calls
                     calls_made: dict[str, Any] = {}
-                    old_functions = []
-                    for call in test.calls or []:
-                        name = call.name
-                        module_name, function_name = name.rsplit(".", 1)
-                        module = importlib.import_module(module_name)
-                        old_functions.append((module, function_name, getattr(module, function_name)))
-
-                        def tmp_function(*args: list[Any], **kwargs: dict[str, Any]) -> Any:
-                            assert not args, "Positional arguments are not supported"
-                            # unknown_args = set(call.arguments.keys()) - set(kwargs.keys())
-                            # assert not unknown_args, f"Unknown arguments {', '.join(unknown_args)}"
-                            if name not in calls_made:
-                                calls_made[name] = []
-                            calls_made[name].append(kwargs)
-                            return call.returns
-
-                        setattr(module, function_name, tmp_function)
-
-                    output = test_function.function(input)
-
-                    # restore the old function
-                    for old_function in old_functions:
-                        setattr(old_function[0], old_function[1], old_function[2])
+                    with setup_mocks(test, calls_made):
+                        output = test_function.function(input)
 
                     end = timer()
                     prediction = Prediction(
@@ -266,3 +246,34 @@ def import_module_from_file(file_path: Path) -> ModuleType:
 
     # Return the module.
     return module
+
+
+@contextmanager
+def setup_mocks(test: Test, calls_made: dict[str, Any]) -> Iterator[None]:
+    """Sets up mock functions for the test calls"""
+    old_functions = []
+    for call in test.calls or []:
+        mock_name = call.name
+        module_name, function_name = mock_name.rsplit(".", 1)
+        # we need to import the module before we can mock the function
+        module = importlib.import_module(module_name)
+        old_functions.append((module, function_name, getattr(module, function_name)))
+
+        def mock_function(*args: tuple, **kwargs: dict[str, Any]) -> Any:
+            assert not args, "Positional arguments are not supported"
+            if mock_name not in calls_made:
+                calls_made[mock_name] = []
+            calls_made[mock_name].append(kwargs)
+            return call.returns
+
+        try:
+            setattr(module, function_name, mock_function)
+        except AttributeError:
+            print(f"Function {function_name} doesn't exist in module {module_name}")
+
+    try:
+        yield
+    finally:
+        # restore the old function
+        for old_function in old_functions:
+            setattr(old_function[0], old_function[1], old_function[2])
