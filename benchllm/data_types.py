@@ -49,7 +49,7 @@ class Prediction(BaseModel):
     output: str
     time_elapsed: float
     function_id: FunctionID
-    calls: dict[str, list[dict[str, Any]]]
+    calls: dict[str, list[dict[str, Any]]] = {}
 
 
 class CallErrorType(str, Enum):
