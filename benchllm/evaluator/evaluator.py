@@ -22,9 +22,11 @@ class Evaluator(ABC):
         self._evaluations: list[Evaluation] = []
         self._workers: int = workers
 
-    class Match(BaseModel):
+    class Candidate(BaseModel):
         prediction: Json
         expected: Json
+        score: float
+        passed: bool
 
     def add_listener(self, listener: EvaluatorListener) -> None:
         self._listeners.append(listener)
@@ -58,11 +60,14 @@ class Evaluator(ABC):
     def _run_evaluation(self, prediction: Prediction) -> Evaluation:
         self._broadcast_evaluate_prediction_started(prediction)
         start = timer()
-        match = self.evaluate_prediction(prediction)
+        candidates = self.evaluate_prediction(prediction)
         end = timer()
 
         evaluation = Evaluation(
-            prediction=prediction, passed=isinstance(match, Evaluator.Match), eval_time_elapsed=end - start
+            prediction=prediction,
+            passed=any([candidate.passed for candidate in candidates]),
+            eval_time_elapsed=end - start,
+            score=max([candidate.score for candidate in candidates], default=0.0),
         )
         self._broadcast_evaluate_prediction_ended(evaluation)
         return evaluation
@@ -88,7 +93,7 @@ class Evaluator(ABC):
         return self._predictions
 
     @abstractmethod
-    def evaluate_prediction(self, prediction: Prediction) -> Optional[Match]:
+    def evaluate_prediction(self, prediction: Prediction) -> list[Candidate]:
         """Evaluate a single prediction, return a Match if the prediction matches the expected output."""
         pass
 

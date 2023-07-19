@@ -1,6 +1,3 @@
-import json
-from typing import Optional
-
 from benchllm.data_types import Prediction
 from benchllm.evaluator import Evaluator
 
@@ -22,9 +19,12 @@ class StringMatchEvaluator(Evaluator):
 
         return expected == output
 
-    def evaluate_prediction(self, prediction: Prediction) -> Optional[Evaluator.Match]:
+    def evaluate_prediction(self, prediction: Prediction) -> list[Evaluator.Candidate]:
         output = prediction.output
+        candidates = []
         for expected in prediction.test.expected:
             if self.match_strings(expected, output):
-                return Evaluator.Match(prediction=prediction.output, expected=expected)
-        return None
+                candidates.append(Evaluator.Candidate(prediction=output, expected=expected, score=1.0, passed=True))
+            else:
+                candidates.append(Evaluator.Candidate(prediction=output, expected=expected, score=0.0, passed=False))
+        return candidates

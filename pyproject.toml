@@ -17,6 +17,7 @@ include = "benchllm"
 
 [tool.isort]
 profile = "black"
+skip = ["benchllm/evaluator/__init__.py"]
 
 [tool.mypy]
 plugins = [ "pydantic.mypy",]
