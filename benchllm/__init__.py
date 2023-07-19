@@ -23,9 +23,9 @@ __all__ = [
 ]
 
 
-def test_wrapper(func: Callable[[T], str], type: Type[T], suite: Path) -> None:
+def test_wrapper(func: Callable[[T], str], input_type: Type[T], suite: Path) -> None:
     test_singleton = TestSingleton()
-    test_singleton.register(func, type=type, suite=suite)
+    test_singleton.register(func, input_type=input_type, suite=suite)
 
 
 def test(*, suite: str = ".") -> Callable[[Callable[[T], str]], None]:

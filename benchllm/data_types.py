@@ -16,23 +16,28 @@ class Test(BaseModel):
 class FunctionID(BaseModel):
     module_path: Path
     line_number: int
+    name: str
 
     def __hash__(self) -> int:
         return hash((self.module_path, self.line_number))
 
     def __str__(self) -> str:
-        return f"{self.module_path}:{self.line_number}"
+        return f"{self.module_path}:{self.line_number} ({self.name})"
 
     def relative_str(self, root_dir: Path) -> str:
         try:
-            return str(FunctionID(module_path=self.module_path.relative_to(root_dir), line_number=self.line_number))
+            return str(
+                FunctionID(
+                    module_path=self.module_path.relative_to(root_dir), line_number=self.line_number, name=self.name
+                )
+            )
         except ValueError:
             # we can't be sure that the module_path loaded from json files is relative to the root_dir
-            return str(FunctionID(module_path=self.module_path, line_number=self.line_number))
+            return str(FunctionID(module_path=self.module_path, line_number=self.line_number, name=self.name))
 
     @staticmethod
     def default() -> "FunctionID":
-        return FunctionID(module_path=Path(""), line_number=0)
+        return FunctionID(module_path=Path(""), line_number=0, name="default")
 
 
 class Prediction(BaseModel):
