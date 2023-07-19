@@ -60,6 +60,7 @@ class Evaluator(ABC):
         start = timer()
         match = self.evaluate_prediction(prediction)
         end = timer()
+
         evaluation = Evaluation(
             prediction=prediction, passed=isinstance(match, Evaluator.Match), eval_time_elapsed=end - start
         )

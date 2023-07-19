@@ -10,9 +10,17 @@ from rich.markup import render
 from rich.table import Table
 
 from benchllm.cache import MemoryCache
-from benchllm.data_types import Evaluation, FunctionID, Prediction, Test, TestFunction
+from benchllm.data_types import (
+    CallErrorType,
+    Evaluation,
+    FunctionID,
+    Prediction,
+    Test,
+    TestFunction,
+)
 from benchllm.evaluator import Evaluator
 from benchllm.listener import EvaluatorListener, TesterListener
+from benchllm.utils import collect_call_errors
 
 
 class ReportListener(TesterListener, EvaluatorListener):
@@ -107,7 +115,37 @@ class RichCliListener(TesterListener, EvaluatorListener):
         else:
             typer.secho("F", fg=typer.colors.RED, bold=True, nl=False)
 
+    def handle_call_error(self, evaluations) -> None:
+        predictions_with_calls = [
+            evaluation.prediction for evaluation in evaluations if evaluation.prediction.test.calls
+        ]
+        if not predictions_with_calls:
+            return
+
+        print_centered(" Call Warnings ")
+
+        for prediction in predictions_with_calls:
+            errors = collect_call_errors(prediction)
+            if not errors:
+                continue
+            relative_path = prediction.function_id.relative_str(self.root_dir)
+            print_centered(f" [yellow]{relative_path}[/yellow] :: [yellow]{prediction.test.file_path}[/yellow] ", "-")
+
+            for error in errors:
+                if error.error_type == CallErrorType.MISSING_ARGUMENT:
+                    print(
+                        f'[blue][bold]{error.function_name}[/bold][/blue] was never called with [blue][bold]"{error.argument_name}"[/bold][/blue]'
+                    )
+                elif error.error_type == CallErrorType.MISSING_FUNCTION:
+                    print(f"[blue][bold]{error.function_name}[/bold][/blue] was never declared")
+                elif error.error_type == CallErrorType.VALUE_MISMATCH:
+                    print(
+                        f'[blue][bold]{error.function_name}[/bold][/blue] was called with "{error.argument_name}=[red][bold]{error.actual_value}[/bold][/red]", expected "[green][bold]{error.expected_value}[/bold][/green]"'
+                    )
+
     def evaluate_ended(self, evaluations: list[Evaluation]) -> None:
+        self.handle_call_error(evaluations)
+
         failed = [evaluation for evaluation in evaluations if not evaluation.passed]
         total_test_time = (
             0.0 if self._eval_only else sum(evaluation.prediction.time_elapsed for evaluation in evaluations) or 0.0

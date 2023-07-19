@@ -1,0 +1,10 @@
+expected:
+  - "yes"
+id: 4b717b39-da96-4ca3-8aaf-070c7f11449c
+input: I'm going to San Francisco today, do I need an umbrella?
+calls:
+  - name: forecast.get_n_day_weather_forecast
+    returns: It's rainy in San Francisco today.
+    arguments:
+      location: San Francisco
+      num_days: 1

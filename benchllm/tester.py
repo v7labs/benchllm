@@ -1,6 +1,7 @@
 import importlib.util
 import inspect
 import json
+import sys
 import uuid
 from pathlib import Path
 from timeit import default_timer as timer
@@ -107,10 +108,40 @@ class Tester:
 
                     self._broadcast_test_started(test)
                     start = timer()
+
+                    # set up mock functions for the test calls
+                    calls_made: dict[str, Any] = {}
+                    old_functions = []
+                    for call in test.calls or []:
+                        name = call.name
+                        module_name, function_name = name.rsplit(".", 1)
+                        module = importlib.import_module(module_name)
+                        old_functions.append((module, function_name, getattr(module, function_name)))
+
+                        def tmp_function(*args: list[Any], **kwargs: dict[str, Any]) -> Any:
+                            assert not args, "Positional arguments are not supported"
+                            # unknown_args = set(call.arguments.keys()) - set(kwargs.keys())
+                            # assert not unknown_args, f"Unknown arguments {', '.join(unknown_args)}"
+                            if name not in calls_made:
+                                calls_made[name] = []
+                            calls_made[name].append(kwargs)
+                            return call.returns
+
+                        setattr(module, function_name, tmp_function)
+
                     output = test_function.function(input)
+
+                    # restore the old function
+                    for old_function in old_functions:
+                        setattr(old_function[0], old_function[1], old_function[2])
+
                     end = timer()
                     prediction = Prediction(
-                        test=test, output=output, time_elapsed=end - start, function_id=test_function.function_id
+                        test=test,
+                        output=output,
+                        time_elapsed=end - start,
+                        function_id=test_function.function_id,
+                        calls=calls_made,
                     )
                     self._predictions.append(prediction)
                     self._broadcast_test_ended(prediction)
@@ -222,8 +253,16 @@ def import_module_from_file(file_path: Path) -> ModuleType:
     if not module:
         raise Exception(f"Failed to load module from {file_path}")
 
+    # Temporarly add the directory of the file to the system path so that the module can import other modules.
+    file_module = file_path.resolve().parent
+    old_sys_path = sys.path.copy()
+    sys.path.append(str(file_module))
+
     # Execute the module.
     spec.loader.exec_module(module)
+
+    # Restore the system path
+    sys.path = old_sys_path
 
     # Return the module.
     return module

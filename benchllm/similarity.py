@@ -17,7 +17,7 @@ def chat_completion_func(prompt: str, *, model: str) -> str:
 
 def complete_text(prompt: str, *, model: str) -> str:
     full_prompt = f"""
-    You will get two anwsers to a question, you should determine if they are semantically similar or not.
+    You will get two anwsers to a question, you should determine if they have the same meaning. Would two people agree that they mean the same, it's okay if different words are used.
     You can only answer "same" or "different", nothing else.
 
     input: {{ 
