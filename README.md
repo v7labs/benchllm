@@ -105,6 +105,7 @@ There are multiple ways to evaluate if the test functions prediction matches the
 By default GPT-3 is used to compare the output. You can use `--evaluator` to use a different method
 
 - `semantic`, checks semantic similarity using language models like GPT-3, GPT-3.5, or GPT-4 (`--model` parameter). Please note, for this evaluator, you need to set the `OPENAI_API_KEY` environment variable.
+- `embedding`, uses cosine distance between embedded vectors. Please note, for this evaluator, you need to set the `OPENAI_API_KEY` environment variable.
 - `string-match`, checks if the strings are matching (case insensitive)
 - `interactive`, user manually accepts or fails tests in the terminal
 - `web`, uses pywebio fora simple local web interface
@@ -124,6 +125,21 @@ To accelerate the evaluation process, BenchLLM uses a cache. If a (prediction, e
 ```bash
 $ bench run examples --cache memory
 ```
+
+When working on developing chains or training agent models, there may be instances where these models need to interact with external functions—for instance, querying a weather forecast or executing an SQL query. In such scenarios, BenchLLM facilitates the ability to mock these functions. This helps you make your tests more predictable and enables the discovery of unexpected function calls.
+
+```yml
+input: I live in London, can I expect rain today?
+expected: ["no"]
+calls:
+  - name: forecast.get_n_day_weather_forecast
+    returns: It's sunny in London.
+    arguments:
+      location: London
+      num_days: 1
+```
+
+In the example above, the function `get_n_day_weather_forecast` in the `forecast` module is mocked. In other words, every time this function is invoked, the model will receive `"It's sunny in London"`. BenchLLM also provides warnings if the function is invoked with argument values different from `get_n_day_weather_forecast(location=London, num_days=1)`. Please note, the provision of these argument parameters is optional.
 
 ### 🧮 Eval
 
