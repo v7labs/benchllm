@@ -126,7 +126,7 @@ To accelerate the evaluation process, BenchLLM uses a cache. If a (prediction, e
 $ bench run examples --cache memory
 ```
 
-When working on developing chains or training agent models, there may be instances where these models need to interact with external functions—for instance, querying a weather forecast or executing an SQL query. In such scenarios, BenchLLM facilitates the ability to mock these functions. This helps you make your tests more predictable and enables the discovery of unexpected function calls.
+When working on developing chains or training agent models, there may be instances where these models need to interact with external functions — for instance, querying a weather forecast or executing an SQL query. In such scenarios, BenchLLM facilitates the ability to mock these functions. This helps you make your tests more predictable and enables the discovery of unexpected function calls.
 
 ```yml
 input: I live in London, can I expect rain today?
