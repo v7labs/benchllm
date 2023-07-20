@@ -156,7 +156,9 @@ class RichCliListener(TesterListener, EvaluatorListener):
             for failure in failed:
                 prediction = failure.prediction
                 relative_path = prediction.function_id.relative_str(self.root_dir)
-                print_centered(f" [red]{relative_path}[/red] :: [red]{prediction.test.file_path}[/red] ", "-")
+                print_centered(
+                    f" [red]{relative_path}[/red] :: [red]{prediction.test.file_path} ({failure.score:.2f})[/red] ", "-"
+                )
 
                 console = Console()
 

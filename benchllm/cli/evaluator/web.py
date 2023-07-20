@@ -25,7 +25,7 @@ class WebEvaluator(Evaluator):
 
         put_markdown("# BenchLLM Web Evaluator")
 
-    def evaluate_prediction(self, prediction: Prediction) -> Optional[Evaluator.Match]:
+    def evaluate_prediction(self, prediction: Prediction) -> list[Evaluator.Candidate]:
         test_name = prediction.test.file_path or prediction.test.id
 
         put_markdown(f"## {test_name}")
@@ -42,6 +42,13 @@ class WebEvaluator(Evaluator):
         answer = radio("Pick the matching answer", options=options, required=True)
 
         if answer and isinstance(answer, int):
-            return Evaluator.Match(prediction=prediction.output, expected=prediction.test.expected[answer])
+            return [
+                Evaluator.Candidate(
+                    prediction=prediction.output, expected=prediction.test.expected[answer], score=1.0, passed=True
+                )
+            ]
         else:
-            return None
+            return [
+                Evaluator.Candidate(prediction=prediction.output, expected=expected, score=0.0, passed=False)
+                for expected in prediction.test.expected
+            ]

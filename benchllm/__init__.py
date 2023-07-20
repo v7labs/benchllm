@@ -3,7 +3,12 @@ from pathlib import Path
 from typing import Callable, Type, TypeVar
 
 from .data_types import Evaluation, Prediction, Test  # noqa
-from .evaluator import Evaluator, SemanticEvaluator, StringMatchEvaluator  # noqa
+from .evaluator import (  # noqa
+    EmbeddingEvaluator,
+    Evaluator,
+    SemanticEvaluator,
+    StringMatchEvaluator,
+)
 from .input_types import ChatInput, SimilarityInput  # noqa
 from .similarity import semantically_similar  # noqa
 from .singleton import TestSingleton  # noqa
@@ -20,6 +25,7 @@ __all__ = [
     "StringMatchEvaluator",
     "SemanticEvaluator",
     "Evaluator",
+    "EmbeddingEvaluator",
 ]
 
 

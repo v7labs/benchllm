@@ -8,7 +8,7 @@ from benchllm.evaluator import Evaluator
 
 
 class InteractiveEvaluator(Evaluator):
-    def evaluate_prediction(self, prediction: Prediction) -> Optional[Evaluator.Match]:
+    def evaluate_prediction(self, prediction: Prediction) -> list[Evaluator.Candidate]:
         header = (
             f'{typer.style("Does ", bold=True)}'
             f"{typer.style(prediction.output, fg=typer.colors.BRIGHT_BLUE, bold=True)}"
@@ -27,5 +27,15 @@ class InteractiveEvaluator(Evaluator):
         click_choice = click.Choice(options)
         response = typer.prompt(prompt_string, default="n", type=click_choice, show_choices=False).lower()
         if response == "n":
-            return None
-        return Evaluator.Match(prediction=prediction.output, expected=prediction.test.expected[int(response) - 1])
+            return [
+                Evaluator.Candidate(prediction=prediction.output, expected=expected, score=0.0, passed=False)
+                for expected in prediction.test.expected
+            ]
+        return [
+            Evaluator.Candidate(
+                prediction=prediction.output,
+                expected=prediction.test.expected[int(response) - 1],
+                score=1.0,
+                passed=True,
+            )
+        ]

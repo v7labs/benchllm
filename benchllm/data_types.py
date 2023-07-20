@@ -75,6 +75,7 @@ class Evaluation(BaseModel):
     prediction: Prediction
     passed: bool
     eval_time_elapsed: float
+    score: float
 
 
 T = TypeVar("T")

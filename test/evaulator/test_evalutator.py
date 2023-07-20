@@ -11,8 +11,8 @@ from benchllm.evaluator import Evaluator
 
 
 class NoopEvaluator(Evaluator):
-    def evaluate_prediction(self, prediction: Prediction) -> Evaluator.Match:
-        return Evaluator.Match(prediction=prediction.output, expected=prediction.output)
+    def evaluate_prediction(self, prediction: Prediction) -> list[Evaluator.Candidate]:
+        return [Evaluator.Candidate(prediction=prediction.output, expected=prediction.output, score=1.0, passed=True)]
 
 
 def test_evaluator_can_load_prediction_file():

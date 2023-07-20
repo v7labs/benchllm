@@ -3,7 +3,12 @@ from pathlib import Path
 
 from benchllm.cache import FileCache, MemoryCache
 from benchllm.cli.evaluator import InteractiveEvaluator, WebEvaluator
-from benchllm.evaluator import Evaluator, SemanticEvaluator, StringMatchEvaluator
+from benchllm.evaluator import (
+    EmbeddingEvaluator,
+    Evaluator,
+    SemanticEvaluator,
+    StringMatchEvaluator,
+)
 
 
 def output_dir_factory() -> Path:
@@ -27,6 +32,8 @@ def get_evaluator(evaluator_name: str, model: str, workers: int) -> Evaluator:
         return StringMatchEvaluator(workers=workers)
     elif evaluator_name == "web":
         return WebEvaluator()
+    elif evaluator_name == "embedding":
+        return EmbeddingEvaluator()
     else:
         raise ValueError(f"Unknown evaluator {evaluator_name}")
 
