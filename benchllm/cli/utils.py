@@ -6,6 +6,7 @@ from benchllm.cli.evaluator import InteractiveEvaluator, WebEvaluator
 from benchllm.evaluator import (
     EmbeddingEvaluator,
     Evaluator,
+    PipeEvaluator,
     SemanticEvaluator,
     StringMatchEvaluator,
 )
@@ -24,6 +25,11 @@ def output_dir_factory() -> Path:
 
 
 def get_evaluator(evaluator_name: str, model: str, workers: int) -> Evaluator:
+    if "," in evaluator_name:
+        evaluator_names = evaluator_name.split(",")
+        return PipeEvaluator(
+            workers=workers, evaluators=[get_evaluator(name, model, workers) for name in evaluator_names]
+        )
     if evaluator_name == "semantic":
         return SemanticEvaluator(model=model, workers=workers)
     elif evaluator_name == "interactive":
