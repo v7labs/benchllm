@@ -116,6 +116,12 @@ The non interactive evaluators also supports `--workers N` to run in the evaluat
 $ bench run --evaluator string-match --workers 5
 ```
 
+It is also possible to combine multiple evaluators, e.g. first do string-match, and only if that doe not match do semantic similarity. This speeds up the evaluation process and can help save on API calls.
+
+```bash
+$ bench run --evaluator string-match,embedding,semantic
+```
+
 To accelerate the evaluation process, BenchLLM uses a cache. If a (prediction, expected) pair has been evaluated in the past and a cache was used, the evaluation output will be saved for future evaluations. There are several types of caches:
 
 - `memory`, only caches output values during the current run. This is particularly useful when running with `--retry-count N`
